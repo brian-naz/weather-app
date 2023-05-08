@@ -7,7 +7,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import OpacityIcon from "@mui/icons-material/Opacity";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import { Fade } from "@mui/material";
+import AirIcon from "@mui/icons-material/Air";
+import WbTwilightIcon from "@mui/icons-material/WbTwilight";
+import { Button, Fade } from "@mui/material";
 
 const Weather = () => {
   const [location, setLocation] = useState("");
@@ -27,7 +29,7 @@ const Weather = () => {
       return "from-gray-400 to-black";
     }
     if (data[0].weather.description.includes("rain")) {
-      return "from-gray-600 to-black";
+      return "from-blue-900 to-black";
     }
     if (data[0].temp < threshold) {
       return "from-cyan-500 to-blue-700";
@@ -41,7 +43,7 @@ const Weather = () => {
 
     try {
       const response = await axios.get(
-        `https://api.weatherbit.io/v2.0/forecast/daily?city=${location}&key=${API_KEY}&days=5`
+        `https://api.weatherbit.io/v2.0/forecast/daily?city=${location}&key=${API_KEY}&days=6`
       );
       setWeatherData(response.data);
       setLoading(false);
@@ -84,9 +86,9 @@ const Weather = () => {
                 onChange={handleChange}
                 className="text-xl text-black font-light p-2 w-50 shadow-xl focus:outline-none"
               />
-              <button type="submit">
-                <SearchIcon size={25} className="text-white cursor-pointer" />
-              </button>
+              <Button type="submit">
+                <SearchIcon className="text-white cursor-pointer" />
+              </Button>
             </div>
           </form>
         </div>
@@ -94,7 +96,7 @@ const Weather = () => {
     );
   }
 
-  const { city_name, data } = weatherData;
+  const { city_name, country_code, data, minutely } = weatherData;
 
   return (
     <Fade in={handleChange}>
@@ -111,24 +113,28 @@ const Weather = () => {
                 onChange={handleChange}
                 className="text-xl text-black font-light p-2 w-50 shadow-xl focus:outline-none"
               />
-              <button type="submit">
-                <SearchIcon size={25} className="text-white cursor-pointer" />
-              </button>
+              <Button type="submit">
+                <SearchIcon className="text-white cursor-pointer" />
+              </Button>
             </div>
           </form>
         </div>
 
-        <div className="flex flex-row items-center justify-between text-white py-3">
+        <div className="flex flex-row items-center justify-center text-white py-3">
           <img src={getIconUrl(data[0])} alt="" className="w-20" />
-          <div className="flex flex-col items-center text-white py-3">
-            <h2 className="text-2xl font-bold mb-4">{city_name}</h2>
+          <div className="flex flex-col items-center text-white py-3 p-10">
+            <h2 className="text-2xl font-bold mb-4">
+              {city_name}, {country_code}
+            </h2>
             <p className="text-5xl">{data[0].temp.toFixed()}&deg;C</p>
-            <div className="flex items-center justify-center py-6 text-xl text-white">
+            <div className="flex items-center justify-center py-3 text-xl text-white">
               {data[0].weather.description}
             </div>
           </div>
-
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col justify-between"></div>
+        </div>
+        <div>
+          <div className="flex flex-row justify-between text-white">
             <div className="flex font-light text-sm items-center justify-center">
               <WbSunnyIcon className="mr-1" />
               Low: {data[0].low_temp.toFixed()}&deg;C
@@ -143,11 +149,11 @@ const Weather = () => {
             </div>
             <div className="flex font-light text-sm items-center justify-center">
               <OpacityIcon className="mr-1" />
-              Humidity: {data[0].rh}
+              Humidity: {data[0].rh}%
             </div>
           </div>
         </div>
-
+        <br></br>
         <Forecast data={data} />
       </div>
     </Fade>

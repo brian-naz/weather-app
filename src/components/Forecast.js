@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 const getIconUrl = (day) => {
   const iconCode = day.weather.icon;
