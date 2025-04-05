@@ -24,7 +24,11 @@ v1.0:
 
 -Initial Release
 
+
 v1.01
+
 -Moved from WeatherAPI to Weatherbit so the app works as intended again
+
 -Hourly forecast
+
 -Added a toggle for Units
