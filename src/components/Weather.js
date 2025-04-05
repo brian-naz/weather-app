@@ -6,11 +6,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import OpacityIcon from "@mui/icons-material/Opacity";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import AirIcon from "@mui/icons-material/Air";
-import WbTwilightIcon from "@mui/icons-material/WbTwilight";
 import { Button, Fade } from "@mui/material";
-import HourlyForecast from "./HourlyForecast"; 
-
+import HourlyForecast from "./HourlyForecast";
 
 const Weather = () => {
   const [location, setLocation] = useState("");
@@ -20,10 +17,7 @@ const Weather = () => {
   const [unit, setUnit] = useState(() => {
     return localStorage.getItem("tempUnit") || "C";
   });
-  const API_KEY = "26dc33589eb94455928200533252903"; 
-  const getIconUrl = (condition) => {
-    return `https:${condition.icon}`;
-  };
+  const API_KEY = "26dc33589eb94455928200533252903";
 
   const formatBackground = (condition, temp) => {
     if (!condition) return "from-cyan-700 to-blue-700";
@@ -82,7 +76,7 @@ const Weather = () => {
   if (!weatherData) {
     return (
       <div
-        className={`mx-auto max-w-screen-md mt-4 py-5 px-32 bg-gradient-to-br h-fit shadow-xl shadow-gray-400`}
+        className={`mx-auto w-full mt-4 py-5 px-6 sm:px-8 md:px-32 bg-gradient-to-br min-h-[300px] h-fit shadow-xl shadow-gray-400 ${formatBackground()}`}
       >
         <div className="flex items-center justify-around my-6">
           <form onSubmit={handleSubmit}>
@@ -107,13 +101,12 @@ const Weather = () => {
   const current = weatherData.current;
   const forecast = weatherData.forecast.forecastday;
   const condition = current.condition.text;
-  const icon = getIconUrl(current.condition);
   const temp = current.temp_c;
 
   return (
     <Fade in={handleChange}>
       <div
-        className={`mx-auto max-w-screen-md mt-4 py-5 px-32 bg-gradient-to-br h-fit shadow-xl shadow-gray-400 ${formatBackground(
+        className={`mx-auto w-full mt-4 py-5 px-6 sm:px-8 md:px-32 bg-gradient-to-br h-fit shadow-xl shadow-gray-400 ${formatBackground(
           condition,
           temp
         )}`}
@@ -136,35 +129,44 @@ const Weather = () => {
         </div>
 
         <Button
-  variant="outlined"
-  onClick={toggleUnit}
-  size="small"
-  sx={{
-    color: unit === "C" ? "lightblue" : "orange",
-    borderColor: "white",
-    minWidth: "30px",
-    padding: "4px 8px",
-    fontSize: "12px",
-    marginLeft: "10px",
-    fontWeight: "bold",
-  }}
->
-  °{unit === "C" ? "F" : "C"}
-</Button>
-
+          variant="outlined"
+          onClick={toggleUnit}
+          size="small"
+          sx={{
+            color: unit === "C" ? "lightblue" : "orange",
+            borderColor: "white",
+            minWidth: "30px",
+            padding: "4px 8px",
+            fontSize: "12px",
+            marginLeft: "10px",
+            fontWeight: "bold",
+          }}
+        >
+          °{unit === "C" ? "F" : "C"}
+        </Button>
 
         <div className="flex flex-col items-center text-white py-3">
-        <h1>{weatherData.location.name}, {weatherData.location.region}</h1>
-          <div className="flex items-center space-x-4">          
-            <img src={current.condition.icon} alt={current.condition.text} className="w-16" />
+          <h1>
+            {weatherData.location.name}, {weatherData.location.region},{" "}
+            {weatherData.location.country}
+          </h1>
+          <div className="flex items-center space-x-4">
+            <img
+              src={current.condition.icon}
+              alt={current.condition.text}
+              className="w-16"
+            />
             <p className="text-5xl">
-  {unit === "C" ? current.temp_c.toFixed() : current.temp_f.toFixed()}°{unit}
-</p>
+              {unit === "C"
+                ? current.temp_c.toFixed()
+                : current.temp_f.toFixed()}
+              °{unit}
+            </p>
           </div>
           <p className="text-xl mt-2">{current.condition.text}</p>
         </div>
 
-        <div className="flex flex-row justify-between text-white">
+        <div className="flex flex-row items-center justify-center sm:justify-between text-white py-3">
           <div className="flex font-light text-sm items-center justify-center">
             <WbSunnyIcon className="mr-1" />
             Low: {forecast[0].day.mintemp_c}&deg;C
