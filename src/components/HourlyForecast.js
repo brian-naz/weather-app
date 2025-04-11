@@ -1,4 +1,5 @@
 import React from "react";
+import { Typography } from "@mui/material";
 
 const HourlyForecast = ({ hours, unit }) => {
   return (
@@ -6,15 +7,17 @@ const HourlyForecast = ({ hours, unit }) => {
       <div className="flex gap-4 text-white">
         {hours.map((hour, idx) => (
           <div key={idx} className="flex flex-col items-center min-w-[70px]">
-            <p className="text-sm">
+            <Typography variant="body1" sx={{ color: "white" }}>
               {new Date(hour.time).getHours()}:00
-            </p>
+            </Typography>
             <img
               src={`https:${hour.condition.icon}`}
               alt=""
-              className="w-8 h-8"
+              style={{ width: "40px", margin: "0 auto" }}
             />
-            <p className="text-sm">{unit === "C" ? hour.temp_c : hour.temp_f}°{unit}</p>
+            <Typography variant="body1" sx={{ color: "white" }}>
+              {unit === "C" ? hour.temp_c : hour.temp_f}°{unit}
+            </Typography>
           </div>
         ))}
       </div>
