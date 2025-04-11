@@ -1,7 +1,7 @@
 # Weather App
 
 To get started:
-<a href="https://weather-app-five-amber.vercel.app/">Demo</link>
+<a href="https://weather-app-brian-naz.vercel.app/">Demo</link>
 
 ### Setup:
 
@@ -32,3 +32,9 @@ v1.01
 -Hourly forecast
 
 -Added a toggle for Units
+
+v1.02
+
+- Added GPS for Default Weather
+- Added Last Saved Local ation
+- Material UI Improvements
