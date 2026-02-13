@@ -1,25 +1,40 @@
 import React from "react";
-import { Typography } from "@mui/material";
 
 const HourlyForecast = ({ hours, unit }) => {
+  const formatTemp = (c, f) => {
+    const value = unit === "C" ? c : f;
+    return Math.round(value);
+  };
+
+  const currentHour = new Date().getHours();
+
+  const filteredHours = hours.filter((hour) => {
+    const hourTime = new Date(hour.time).getHours();
+    return hourTime >= currentHour;
+  });
+
   return (
-    <div className="overflow-x-scroll whitespace-nowrap py-4">
-      <div className="flex gap-4 text-white">
-        {hours.map((hour, idx) => (
-          <div key={idx} className="flex flex-col items-center min-w-[70px]">
-            <Typography variant="body1" sx={{ color: "white" }}>
-              {new Date(hour.time).getHours()}:00
-            </Typography>
-            <img
-              src={`https:${hour.condition.icon}`}
-              alt=""
-              style={{ width: "40px", margin: "0 auto" }}
-            />
-            <Typography variant="body1" sx={{ color: "white" }}>
-              {unit === "C" ? hour.temp_c : hour.temp_f}°{unit}
-            </Typography>
-          </div>
-        ))}
+    <div className="overflow-x-auto py-4">
+      <div className="flex gap-6 text-white">
+        {filteredHours.map((hour, idx) => {
+          const hourLabel = new Date(hour.time).getHours();
+
+          return (
+            <div key={idx} className="flex flex-col items-center min-w-[70px]">
+              <p className="text-sm font-light opacity-80">{idx === 0 ? "Now" : `${hourLabel}`}</p>
+
+              <img
+                src={`https:${hour.condition.icon}`}
+                alt=""
+                className="w-12 my-2 object-contain my-2"
+              />
+
+              <p className="text-base font-light">
+                {formatTemp(hour.temp_c, hour.temp_f)}°
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
