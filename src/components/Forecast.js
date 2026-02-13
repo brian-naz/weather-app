@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Card, CardContent, Typography, Grid } from "@mui/material";
+import { Card, CardContent, Typography, Grid } from "@mui/material";
 
 function Forecast({ forecast, unit }) {
   return (
@@ -31,31 +31,5 @@ function Forecast({ forecast, unit }) {
   );
 }
 
-/* function Forecast({ forecast, unit }) {
-  return (
-    <Grid container spacing={2}>
-      {forecast.map((day, idx) => (
-        <Grid item xs={4} key={idx}>
-          <Typography variant="subtitle2">
-            {new Date(day.date).toLocaleDateString("en-US", {
-              weekday: "short",
-            })}
-          </Typography>
-          <img
-            src={`https:${day.day.condition.icon}`}
-            alt={day.day.condition.text}
-            style={{ width: "50px", margin: "0 auto" }}
-          />
-          <Typography variant="body1">
-            {unit === "C"
-              ? day.day.avgtemp_c.toFixed()
-              : day.day.avgtemp_f.toFixed()}
-            °{unit}
-          </Typography>
-        </Grid>
-      ))}
-    </Grid>
-  );
-} */
 
 export default Forecast;

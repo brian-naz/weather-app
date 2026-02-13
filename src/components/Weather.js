@@ -6,8 +6,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import OpacityIcon from "@mui/icons-material/Opacity";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import { Button, Fade, Switch } from "@mui/material";
-import { Box, Typography, TextField, IconButton } from "@mui/material";
+import { Fade, Switch } from "@mui/material";
+import { Typography, TextField, IconButton } from "@mui/material";
 import HourlyForecast from "./HourlyForecast";
 
 const Weather = () => {
@@ -21,51 +21,50 @@ const Weather = () => {
   const API_KEY = "26dc33589eb94455928200533252903";
 
   const formatBackground = (condition, temp) => {
-    if (!condition) return "from-cyan-700 to-blue-700";
+  if (!condition) return "from-cyan-700 to-blue-700";
 
-    if (condition.toLowerCase().includes("cloud")) {
-      return "from-gray-400 to-black";
-    }
-    if (condition.toLowerCase().includes("rain")) {
-      return "from-blue-900 to-black";
-    }
-    if (temp < 15) {
-      return "from-cyan-500 to-blue-700";
-    }
-    return "from-yellow-500 to-orange-700";
-  };
+  const c = condition.toLowerCase();
+
+  if (c.includes("rain")) {
+    return "from-gray-800 via-blue-900 to-black animate-rain";
+  }
+
+  if (c.includes("cloud")) {
+    return "from-gray-400 via-gray-600 to-gray-800 animate-cloud";
+  }
+
+  if (c.includes("snow")) {
+    return "from-blue-200 via-white to-blue-400 animate-snow";
+  }
+
+  if (temp < 15) {
+    return "from-cyan-500 via-blue-700 to-indigo-900 animate-cold";
+  }
+
+  return "from-sky-500 via-blue-500 to-blue-700 animate-sky";
+};
 
   useEffect(() => {
-    const savedCity = localStorage.getItem("lastCity");
+    const savedCity = localStorage.getItem("lastCity") || "New York";
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          fetchWeatherByCoords(
-            position.coords.latitude,
-            position.coords.longitude
-          );
-        },
-        () => {
-          if (savedCity) {
-            setLocation(savedCity);
-            fetchWeatherByCity(savedCity);
-          } else {
-            setLocation("New York");
-            fetchWeatherByCity("New York");
-          }
-        }
-      );
-    } else {
-      if (savedCity) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        fetchWeatherByCoords(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+      },
+      () => {
         setLocation(savedCity);
         fetchWeatherByCity(savedCity);
-      } else {
-        setLocation("New York");
-        fetchWeatherByCity("New York");
       }
-    }
-  }, []);
+    );
+  } else {
+    setLocation(savedCity);
+    fetchWeatherByCity(savedCity);
+  }
+}, []);
 
   const fetchWeatherByCity = async (city) => {
     try {
@@ -127,53 +126,18 @@ const Weather = () => {
     return <div className="flex items-center justify-around my-6">{error}</div>;
   }
 
-  if (!weatherData) {
-    return (
-      <Box my={4}>
-        <div
-          className={`mx-auto w-full mt-4 py-5 px-6 sm:px-8 md:px-32 bg-gradient-to-br min-h-[300px] h-fit shadow-xl shadow-gray-400 ${formatBackground()}`}
-        >
-          <div className="flex items-center justify-around my-6">
-            <form
-              onSubmit={handleSubmit}
-              style={{ display: "flex", alignItems: "center" }}
-            >
-              <TextField
-                hiddenLabel
-                fullWidth
-                variant="standard"
-                placeholder="Search"
-                value={location}
-                onChange={handleChange}
-                InputProps={{
-                  style: {
-                    color: "white",
-                  },
-                }}
-              />
-              <IconButton type="submit" aria-label="search" sx={{ ml: 1 }}>
-                <SearchIcon sx={{ color: "white" }} />
-              </IconButton>
-            </form>
-          </div>
-        </div>
-      </Box>
-    );
-  }
-
   const current = weatherData.current;
   const forecast = weatherData.forecast.forecastday;
   const condition = current.condition.text;
   const temp = current.temp_c;
 
   return (
-    <Box my={4}>
       <Fade in={handleChange}>
+        <div className="relative min-h-[100dvh] w-full overflow-hidden">
         <div
-          className={`mx-auto w-full mt-4 py-5 px-6 sm:px-8 md:px-32 bg-gradient-to-br h-fit ${formatBackground(
-            condition,
-            temp
-          )}`}
+          className={`absolute inset-0 min-h-[100dvh] w-full py-5 px-6 sm:px-8 md:px-32 
+          transition-all duration-1000 ease-in-out
+          bg-gradient-to-br ${formatBackground(condition, temp)}`}
         >
           <div className="flex items-center justify-around my-6">
             <form
@@ -204,7 +168,7 @@ const Weather = () => {
                 onClick={toggleUnit}
                 size="small"
                 sx={{
-                  color: unit === "C" ? "lightblue" : "orange",
+                  color: unit === "C" ? "lightblue" : "white",
                   borderColor: "white",
                   minWidth: "30px",
                   padding: "4px 8px",
@@ -221,7 +185,9 @@ const Weather = () => {
             </form>
           </div>
 
-          <div className="flex flex-col items-center text-white py-3">
+          <div className="backdrop-blur-lg bg-white/10 rounded-2xl 
+                          p-6 shadow-xl border border-white/20 
+                          flex flex-col items-center text-white py-3">
             <Typography variant="overline" sx={{ color: "white" }}>
               {weatherData.location.name}, {weatherData.location.region},{" "}
               {weatherData.location.country}
@@ -262,11 +228,18 @@ const Weather = () => {
             </Typography>
           </div>
           <br />
-          <Forecast forecast={forecast} unit={unit} />
-          <HourlyForecast hours={forecast[0].hour} unit={unit} />
+          <div className="backdrop-blur-lg bg-white/10 rounded-2xl 
+                          p-6 shadow-xl border border-white/20 mt-6">
+            <Forecast forecast={forecast} unit={unit} />
+          </div>
+          <div className="backdrop-blur-lg bg-white/10 rounded-2xl 
+                          p-6 shadow-xl border border-white/20 mt-6">
+              <HourlyForecast hours={forecast[0].hour} unit={unit} />
+            </div>
+        </div>
         </div>
       </Fade>
-    </Box>
+
   );
 };
 

@@ -8,3 +8,65 @@
         font-family: 'Helvetica', sans-serif;
     }
 }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+@supports(padding: max(0px)) {
+  body {
+    padding:
+      env(safe-area-inset-top)
+      env(safe-area-inset-right)
+      env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
+  }
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  animation: gradientMove 10s ease infinite;
+}
+
+@keyframes slowMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-rain,
+.animate-cloud,
+.animate-snow,
+.animate-cold,
+.animate-warm,
+.animate-sky {
+  background-size: 200% 200%;
+  animation: slowMove 12s ease infinite;
+}
+
+.sun-glow {
+  position: absolute;
+  top: -10%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0)
+  );
+  filter: blur(20px);
+  opacity: 0.8;
+}
