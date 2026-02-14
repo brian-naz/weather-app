@@ -133,7 +133,7 @@ const Weather = () => {
   if (!weatherData) {
     return (
       <div
-        className={`mx-auto w-full mt-4 py-5 px-6 sm:px-8 md:px-32 bg-gradient-to-br min-h-[300px] h-fit shadow-xl shadow-gray-400 ${formatBackground()}`}
+        className={`mx-auto w-full mt-6 py-5 px-6 sm:px-8 md:px-32 bg-gradient-to-br min-h-[300px] h-fit shadow-xl shadow-gray-400 ${formatBackground()}`}
       >
         <div className="p-4 flex items-center justify-between mb-6">
           <form
