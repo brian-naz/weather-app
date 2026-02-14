@@ -44,9 +44,16 @@ v1.02:
 
 (Feb 13 2026)
 
-v1.03:
+v2.0:
 
 - Updated to new iOS Glass-UI
 - Matches iOS weather app layout
 - Added Sky animations
 - UI Improvements
+
+(Feb 14 2026)
+
+v2.0.1:
+
+- Minor UI improvements
+- Bug fixes
