@@ -233,6 +233,7 @@ const Weather = () => {
               <p className="text-xs opacity-80 leading-relaxed"></p>
             </div>
           </div>
+
           <button
             onClick={() => setShowDrawer(true)}
             className="fixed bottom-6 right-6 z-50
@@ -340,6 +341,23 @@ const Weather = () => {
     humidityMessage = "The humidity level is comfortable.";
   }
 
+  const getUVLabel = (uv) => {
+    if (uv <= 2) return "Low";
+    if (uv <= 5) return "Moderate";
+    if (uv <= 7) return "High";
+    if (uv <= 10) return "Very High";
+    return "Extreme";
+  };
+
+  const getVisibilityMessage = (vis) => {
+    if (vis >= 10) return "Perfectly clear conditions.";
+    if (vis >= 6) return "Good visibility.";
+    if (vis >= 3) return "Slight haze present.";
+    return "Reduced visibility.";
+  };
+
+  const pressureTrend = current?.pressure_mb > 1013 ? "up" : "down";
+
   return (
     <div className="relative min-h-screen">
       <div
@@ -348,7 +366,7 @@ const Weather = () => {
           bg-gradient-to-br ${formatBackground(condition, temp)}`}
       ></div>
       <div
-        className="max-w-3xl mx-auto px-6 py-8 space-y-6"
+        className="max-w-3xl mx-auto px-6 py-8 space-y-6 pb-40"
         style={{
           paddingBottom: "env(safe-area-inset-bottom)",
         }}
@@ -439,80 +457,338 @@ const Weather = () => {
           <p className="text-xs opacity-80 leading-relaxed">{feelsMessage}</p>
         </div>
 
-        <div className={`${glass} p-5 text-white/90 mx-2`}>
-          <p className="text-xs opacity-70 mb-2">HUMIDITY</p>
-          <p className="text-2xl font-light">{current.humidity}%</p>
+        <div className={`${glass} p-5 text-white`}>
+          <div className="text-xs tracking-widest text-white/60 mb-2">
+            UV INDEX
+          </div>
+
+          <div className="text-2xl font-light leading-none">
+            {current?.uv ?? "--"}
+          </div>
+
+          <div className="text-xl font-light mt-2">
+            {getUVLabel(current?.uv ?? 0)}
+          </div>
+
+          {/* Gradient Bar */}
+          <div className="relative mt-6">
+            <div className="h-2 rounded-full bg-gradient-to-r from-green-500 via-yellow-400 via-orange-500 via-red-500 to-purple-600" />
+
+            {/* Indicator Dot */}
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md transition-all duration-500"
+              style={{
+                left: `${((current?.uv ?? 0) / 11) * 100}%`,
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+          </div>
+
+          <div className="text-white/70 text-sm mt-4">
+            {current?.uv > 5
+              ? "Use sun protection today."
+              : "Minimal sun protection required."}
+          </div>
+        </div>
+      </div>
+
+      <div className={`${glass} p-6 mt-6 mx-2`}>
+        <div className="flex items-start justify-between gap-8">
+          <div className="flex-1 space-y-5 text-white">
+            <div className="text-xs tracking-widest text-white/60">WIND</div>
+
+            <div className="space-y-4 text-sm">
+              <div className="flex justify-between border-b border-white/10 pb-2">
+                <span className="opacity-60">Wind</span>
+                <span>
+                  {unit === "C"
+                    ? `${current?.wind_kph ?? "--"} kph`
+                    : `${current?.wind_mph ?? "--"} mph`}
+                </span>
+              </div>
+
+              <div className="flex justify-between border-b border-white/10 pb-2">
+                <span className="opacity-60">Gusts</span>
+                <span>
+                  {unit === "C"
+                    ? `${current?.gust_kph ?? "--"} kph`
+                    : `${current?.gust_mph ?? "--"} mph`}
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="opacity-60">Direction</span>
+                <span>
+                  {current?.wind_degree ?? "--"}°
+                  {current?.wind_dir ? ` ${current.wind_dir}` : ""}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="relative w-44 h-44 flex items-center justify-center">
+            {/* Outer Ring */}
+            <div className="absolute w-full h-full rounded-full border border-white/10"></div>
+
+            {/* Radial Ticks */}
+            {[...Array(40)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-[2px] h-3 bg-white/20"
+                style={{
+                  transform: `rotate(${i * 9}deg) translateY(-70px)`,
+                }}
+              />
+            ))}
+
+            {/* Cardinal Directions */}
+            <div className="absolute top-2 text-xs opacity-70 text-white">
+              N
+            </div>
+            <div className="absolute bottom-2 text-xs opacity-70 text-white">
+              S
+            </div>
+            <div className="absolute left-2 text-xs opacity-70 text-white">
+              W
+            </div>
+            <div className="absolute right-2 text-xs opacity-70 text-white">
+              E
+            </div>
+
+            {/* Wind Arrow */}
+            <svg
+              className="absolute w-32 h-32 transition-transform duration-500"
+              viewBox="0 0 100 100"
+              style={{
+                transform: `rotate(${current?.wind_degree ?? 0}deg)`,
+              }}
+            >
+              {/* Shaft */}
+              <line
+                x1="50"
+                y1="25"
+                x2="50"
+                y2="75"
+                stroke="white"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+
+              {/* Arrow Head */}
+              <path d="M50 15 L44 28 L56 28 Z" fill="white" />
+
+              {/* Bottom Circle */}
+              <circle cx="50" cy="85" r="6" fill="white" />
+            </svg>
+
+            <div className="absolute w-28 h-28 rounded-full bg-white/5 backdrop-blur-md z-10"></div>
+
+            {/* Center Speed */}
+            <div className="text-center">
+              <div className="text-3xl font-light text-white">
+                {unit === "C"
+                  ? (current?.wind_kph ?? "--")
+                  : (current?.wind_mph ?? "--")}
+              </div>
+              <div className="text-sm opacity-70 text-white">
+                {unit === "C" ? "kph" : "mph"}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4 mt-4 mx-2">
+        <div className={`${glass} p-5 text-white`}>
+          <div className="text-xs tracking-widest text-white/60 mb-2">
+            VISIBILITY
+          </div>
+
+          <div className="text-2xl font-light leading-none">
+            {current?.vis_miles ?? "--"} mi
+          </div>
+
+          <div className="text-white/70 text-sm mt-4">
+            {getVisibilityMessage(current?.vis_miles ?? 0)}
+          </div>
+        </div>
+        <div className={`${glass} p-5 text-white`}>
+          <div className="text-xs tracking-widest text-white/60 mb-2">
+            HUMIDITY
+          </div>
+
+          <div className="text-2xl font-light mb-3">
+            {current?.humidity ?? "--"}%
+          </div>
+
           <p className="text-xs opacity-80 leading-relaxed">
             {humidityMessage}
           </p>
         </div>
       </div>
+      <div className="grid grid-cols-2 gap-4 mt-4 mx-2">
+        <div className={`${glass} p-5 text-white`}>
+          <div className="text-xs tracking-widest text-white/60 mb-2">
+            PRECIPITATION
+          </div>
 
-      <button
-        onClick={() => setShowDrawer(true)}
-        className="fixed bottom-6 right-6 z-50
+          <div className="text-2xl font-light leading-none">
+            {current?.precip_in ?? 0}"
+          </div>
+
+          <div className="text-lg font-light mt-2">Today</div>
+
+          <div className="text-white/70 text-sm mt-4">
+            {(current?.precip_in ?? 0) === 0
+              ? "None expected today."
+              : "Rain expected today."}
+          </div>
+        </div>
+        <div className={`${glass} p-6 text-white`}>
+          <div className="flex items-center gap-2 text-xs tracking-widest text-white/60 mb-4">
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="9" />
+            </svg>
+            PRESSURE
+          </div>
+
+          <div className="relative w-full flex justify-center items-center mb-6">
+            {/* Dial */}
+            <div className="relative w-36 h-36 flex items-center justify-center">
+              {/* Outer Ring */}
+              <div className="absolute w-full h-full rounded-full border border-white/10"></div>
+
+              {/* Radial Ticks (half arc like iOS) */}
+              {[...Array(40)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-[2px] h-3 bg-white/20"
+                  style={{
+                    transform: `rotate(${i * 4.5 - 90}deg) translateY(-60px)`,
+                  }}
+                />
+              ))}
+
+              {/* Center Content */}
+              <div className="text-center z-10">
+                {/* Trend Arrow ABOVE value */}
+                <div className="flex justify-center mb-2">
+                  {pressureTrend === "up" ? (
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="2"
+                    >
+                      <path d="M12 19V5M5 12l7-7 7 7" />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="2"
+                    >
+                      <path d="M12 5v14M19 12l-7 7-7-7" />
+                    </svg>
+                  )}
+                </div>
+
+                {/* Pressure Value */}
+                <div className="text-2xl font-light leading-none">
+                  {current.pressure_in}
+                </div>
+
+                {/* Unit */}
+                <div className="text-sm opacity-70 mt-1">inHg</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Labels */}
+          <div className="flex justify-between text-sm text-white/60 mt-0 px-6">
+            <span>Low</span>
+            <span>High</span>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setShowDrawer(true)}
+          className="fixed bottom-6 right-6 z-50
            h-14 w-14 flex items-center justify-center
            backdrop-blur-2xl bg-white/10
            border border-white/10
            rounded-full
            shadow-[0_8px_30px_rgba(0,0,0,0.25)]
            text-white/90 text-xl"
-      >
-        <div className="flex flex-col gap-[3px]">
-          <div className="w-5 h-[2px] bg-white rounded-full"></div>
-          <div className="w-5 h-[2px] bg-white rounded-full"></div>
-          <div className="w-5 h-[2px] bg-white rounded-full"></div>
-        </div>
-      </button>
-      <div
-        className={`fixed inset-0 z-40 transition-opacity duration-300 ${
-          showDrawer
-            ? "opacity-100 bg-black/40"
-            : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setShowDrawer(false)}
-      />
-      <div
-        className={`fixed inset-0 z-50 
+        >
+          <div className="flex flex-col gap-[3px]">
+            <div className="w-5 h-[2px] bg-white rounded-full"></div>
+            <div className="w-5 h-[2px] bg-white rounded-full"></div>
+            <div className="w-5 h-[2px] bg-white rounded-full"></div>
+          </div>
+        </button>
+        <div
+          className={`fixed inset-0 z-40 transition-opacity duration-300 ${
+            showDrawer
+              ? "opacity-100 bg-black/40"
+              : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setShowDrawer(false)}
+        />
+        <div
+          className={`fixed inset-0 z-50 
     bg-white/5 backdrop-blur-3xl border-l border-white/10
     transform transition-transform duration-300 ease-out
     ${showDrawer ? "translate-x-0" : "translate-x-full"}`}
-      >
-        <div className="h-full w-full p-4 overflow-y-auto">
-          <div className="p-4 overflow-y-auto h-full">
-            <p className="text-5xl font-light text-white/90 mb-6">Weather</p>
+        >
+          <div className="h-full w-full p-4 overflow-y-auto">
+            <div className="p-4 overflow-y-auto h-full">
+              <p className="text-5xl font-light text-white/90 mb-6">Weather</p>
 
-            {searchHistory.map((city, index) => (
-              <CityCard
-                key={index}
-                city={city}
-                unit={unit}
-                onSelect={(city) => {
-                  fetchWeatherByCity(city.name);
-                  setShowDrawer(false);
-                }}
-                onDelete={(name) => {
-                  if (name === weatherData.location.name) {
-                    return;
-                  }
-                  const updated = searchHistory.filter((c) => c.name !== name);
-                  setSearchHistory(updated);
-                  localStorage.setItem(
-                    "weatherHistory",
-                    JSON.stringify(updated),
-                  );
-                }}
-              />
-            ))}
-            {searchHistory.length === 0 && (
-              <div
-                onClick={() => setShowDrawer(false)}
-                className="flex items-center justify-center h-full text-white/70 text-sm"
-              >
-                No saved locations
-                <br />
-              </div>
-            )}
+              {searchHistory.map((city, index) => (
+                <CityCard
+                  key={index}
+                  city={city}
+                  unit={unit}
+                  onSelect={(city) => {
+                    fetchWeatherByCity(city.name);
+                    setShowDrawer(false);
+                  }}
+                  onDelete={(name) => {
+                    if (name === weatherData.location.name) {
+                      return;
+                    }
+                    const updated = searchHistory.filter(
+                      (c) => c.name !== name,
+                    );
+                    setSearchHistory(updated);
+                    localStorage.setItem(
+                      "weatherHistory",
+                      JSON.stringify(updated),
+                    );
+                  }}
+                />
+              ))}
+              {searchHistory.length === 0 && (
+                <div
+                  onClick={() => setShowDrawer(false)}
+                  className="flex items-center justify-center h-full text-white/70 text-sm"
+                >
+                  No saved locations
+                  <br />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
