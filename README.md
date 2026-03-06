@@ -46,6 +46,10 @@ v2.0.1:
 
 - Minor UI improvements
 
+### Bugs
+
+- The floating button may be cropped on first view so you'll have to scroll down to fully see it
+
 To get started:
 <a href="https://weather-app-brian-naz.vercel.app/">Demo</link>
 
