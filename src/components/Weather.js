@@ -149,7 +149,7 @@ const Weather = () => {
           bg-gradient-to-br ${formatBackground()}`}
         >
           <div
-            className="max-w-3xl mx-auto px-6 py-8 space-y-6"
+            className="max-w-3xl mx-auto px-6 py-8 space-y-6 pb-32"
             style={{
               paddingBottom: "env(safe-area-inset-bottom)",
             }}
@@ -359,7 +359,7 @@ const Weather = () => {
   const pressureTrend = current?.pressure_mb > 1013 ? "up" : "down";
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen pb-12">
       <div
         className={`absolute inset-0 -z-10 min-h-[100dvh] w-full py-5 px-6 sm:px-8 md:px-32 
           transition-all duration-1000 ease-in-out
@@ -470,11 +470,9 @@ const Weather = () => {
             {getUVLabel(current?.uv ?? 0)}
           </div>
 
-          {/* Gradient Bar */}
           <div className="relative mt-6">
             <div className="h-2 rounded-full bg-gradient-to-r from-green-500 via-yellow-400 via-orange-500 via-red-500 to-purple-600" />
 
-            {/* Indicator Dot */}
             <div
               className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md transition-all duration-500"
               style={{
@@ -526,10 +524,8 @@ const Weather = () => {
             </div>
           </div>
           <div className="relative w-44 h-44 flex items-center justify-center">
-            {/* Outer Ring */}
             <div className="absolute w-full h-full rounded-full border border-white/10"></div>
 
-            {/* Radial Ticks */}
             {[...Array(40)].map((_, i) => (
               <div
                 key={i}
@@ -540,7 +536,6 @@ const Weather = () => {
               />
             ))}
 
-            {/* Cardinal Directions */}
             <div className="absolute top-2 text-xs opacity-70 text-white">
               N
             </div>
@@ -554,7 +549,6 @@ const Weather = () => {
               E
             </div>
 
-            {/* Wind Arrow */}
             <svg
               className="absolute w-32 h-32 transition-transform duration-500"
               viewBox="0 0 100 100"
@@ -562,7 +556,6 @@ const Weather = () => {
                 transform: `rotate(${current?.wind_degree ?? 0}deg)`,
               }}
             >
-              {/* Shaft */}
               <line
                 x1="50"
                 y1="25"
@@ -573,16 +566,13 @@ const Weather = () => {
                 strokeLinecap="round"
               />
 
-              {/* Arrow Head */}
               <path d="M50 15 L44 28 L56 28 Z" fill="white" />
 
-              {/* Bottom Circle */}
               <circle cx="50" cy="85" r="6" fill="white" />
             </svg>
 
             <div className="absolute w-28 h-28 rounded-full bg-white/5 backdrop-blur-md z-10"></div>
 
-            {/* Center Speed */}
             <div className="text-center">
               <div className="text-3xl font-light text-white">
                 {unit === "C"
@@ -658,12 +648,9 @@ const Weather = () => {
           </div>
 
           <div className="relative w-full flex justify-center items-center mb-6">
-            {/* Dial */}
             <div className="relative w-36 h-36 flex items-center justify-center">
-              {/* Outer Ring */}
               <div className="absolute w-full h-full rounded-full border border-white/10"></div>
 
-              {/* Radial Ticks (half arc like iOS) */}
               {[...Array(40)].map((_, i) => (
                 <div
                   key={i}
@@ -674,9 +661,7 @@ const Weather = () => {
                 />
               ))}
 
-              {/* Center Content */}
               <div className="text-center z-10">
-                {/* Trend Arrow ABOVE value */}
                 <div className="flex justify-center mb-2">
                   {pressureTrend === "up" ? (
                     <svg
@@ -703,24 +688,20 @@ const Weather = () => {
                   )}
                 </div>
 
-                {/* Pressure Value */}
                 <div className="text-2xl font-light leading-none">
                   {current.pressure_in}
                 </div>
 
-                {/* Unit */}
                 <div className="text-sm opacity-70 mt-1">inHg</div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Labels */}
           <div className="flex justify-between text-sm text-white/60 mt-0 px-6">
             <span>Low</span>
             <span>High</span>
           </div>
         </div>
-
         <button
           onClick={() => setShowDrawer(true)}
           className="fixed bottom-6 right-6 z-50
@@ -737,58 +718,57 @@ const Weather = () => {
             <div className="w-5 h-[2px] bg-white rounded-full"></div>
           </div>
         </button>
-        <div
-          className={`fixed inset-0 z-40 transition-opacity duration-300 ${
-            showDrawer
-              ? "opacity-100 bg-black/40"
-              : "opacity-0 pointer-events-none"
-          }`}
-          onClick={() => setShowDrawer(false)}
-        />
-        <div
-          className={`fixed inset-0 z-50 
+      </div>
+
+      <div
+        className={`fixed inset-0 z-40 transition-opacity duration-300 ${
+          showDrawer
+            ? "opacity-100 bg-black/40"
+            : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setShowDrawer(false)}
+      />
+      <div
+        className={`fixed inset-0 z-50 
     bg-white/5 backdrop-blur-3xl border-l border-white/10
     transform transition-transform duration-300 ease-out
     ${showDrawer ? "translate-x-0" : "translate-x-full"}`}
-        >
-          <div className="h-full w-full p-4 overflow-y-auto">
-            <div className="p-4 overflow-y-auto h-full">
-              <p className="text-5xl font-light text-white/90 mb-6">Weather</p>
+      >
+        <div className="h-full w-full p-4 overflow-y-auto">
+          <div className="p-4 overflow-y-auto h-full">
+            <p className="text-5xl font-light text-white/90 mb-6">Weather</p>
 
-              {searchHistory.map((city, index) => (
-                <CityCard
-                  key={index}
-                  city={city}
-                  unit={unit}
-                  onSelect={(city) => {
-                    fetchWeatherByCity(city.name);
-                    setShowDrawer(false);
-                  }}
-                  onDelete={(name) => {
-                    if (name === weatherData.location.name) {
-                      return;
-                    }
-                    const updated = searchHistory.filter(
-                      (c) => c.name !== name,
-                    );
-                    setSearchHistory(updated);
-                    localStorage.setItem(
-                      "weatherHistory",
-                      JSON.stringify(updated),
-                    );
-                  }}
-                />
-              ))}
-              {searchHistory.length === 0 && (
-                <div
-                  onClick={() => setShowDrawer(false)}
-                  className="flex items-center justify-center h-full text-white/70 text-sm"
-                >
-                  No saved locations
-                  <br />
-                </div>
-              )}
-            </div>
+            {searchHistory.map((city, index) => (
+              <CityCard
+                key={index}
+                city={city}
+                unit={unit}
+                onSelect={(city) => {
+                  fetchWeatherByCity(city.name);
+                  setShowDrawer(false);
+                }}
+                onDelete={(name) => {
+                  if (name === weatherData.location.name) {
+                    return;
+                  }
+                  const updated = searchHistory.filter((c) => c.name !== name);
+                  setSearchHistory(updated);
+                  localStorage.setItem(
+                    "weatherHistory",
+                    JSON.stringify(updated),
+                  );
+                }}
+              />
+            ))}
+            {searchHistory.length === 0 && (
+              <div
+                onClick={() => setShowDrawer(false)}
+                className="flex items-center justify-center h-full text-white/70 text-sm"
+              >
+                No saved locations
+                <br />
+              </div>
+            )}
           </div>
         </div>
       </div>

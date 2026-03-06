@@ -1,22 +1,6 @@
 # Weather App
 
-To get started:
-<a href="https://weather-app-brian-naz.vercel.app/">Demo</link>
-
-### Setup:
-
-Clone the repo:
-```bash
-git clone https://github.com/brian-naz/weather-app.git
-```
-Go to the directory and simply type:
-```bash
-npm install
-```
-To run:
-```bash
-npm start
-```
+An iOS Weather App clone that I made using weatherbitapi (the free version)
 
 ### Changelog:
 
@@ -57,3 +41,25 @@ v2.0.1:
 
 - Minor UI improvements
 - Bug fixes
+
+(Mar 6 2026)
+
+- Minor UI improvements
+
+To get started:
+<a href="https://weather-app-brian-naz.vercel.app/">Demo</link>
+
+### Setup:
+
+Clone the repo:
+```bash
+git clone https://github.com/brian-naz/weather-app.git
+```
+Go to the directory and simply type:
+```bash
+npm install
+```
+To run:
+```bash
+npm start
+```
